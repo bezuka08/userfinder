@@ -24,3 +24,22 @@ echo -e "
       ${Y} Usage: bash $0 list.txt Username 
       ${O} Nothing Is Perfect, Try Again And Make It 
           "
+LISTS=$1
+UNAME=$2
+
+if [[ ! -f ${1} ]]; then
+	echo -e ${R}"ERROR: ${1} List Or Username Not Found"
+	echo -e ${C}"Usage: $0 list.txt Username"
+	exit
+fi
+
+for SITE in $(cat $LISTS);
+do
+	link=$(echo $SITE | sed "s/usrname/$2/")
+	response=$(curl -I $link 2>/dev/null | head -n 1 | cut -d$' ' -f2)
+    if [[ $response =~ '200' ]]; then
+		echo -e "\e[32m[+] FOUND: ${link}"
+	else
+		echo -e "\e[31m[-] NOT FOUND: ${link}"
+	fi
+done
